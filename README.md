@@ -87,7 +87,8 @@ Bug reports are welcome; code contributions aren't being accepted -
 - **Don't sell it**, or put it behind a paid tier or perk. (Donations to a server whose players use
   it are fine.)
 - Permission for anything on that list is one
-  [issue](https://github.com/Nipeno/MintCap/issues) away.
+  [request](https://github.com/Nipeno/MintCap/issues/new?template=permission_request.yml) away -
+  say what you want to do and you'll get a straight answer.
 
 The bundled ReShade (BSD 3-Clause) and Dear ImGui (MIT) keep their own licences, shipped in every
 release alongside

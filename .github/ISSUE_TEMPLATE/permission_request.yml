@@ -1,0 +1,68 @@
+name: Permission request
+description: Ask to redistribute, bundle, mirror, or sell MintCap (things LICENSE section 3 forbids by default).
+title: "[Permission]: "
+labels: ["permission-request", "license", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        MintCap is free to use, and you never need permission for that — installing it, running it
+        on as many PCs as you like, building it from source, or modifying your own copy are all
+        already allowed (LICENSE section 2).
+
+        This form is for the things section 3 forbids **by default**: handing out copies, bundling
+        it with something else, mirroring the download, or anything commercial. Permission can be
+        given in writing, and when it is, it gets recorded in
+        [NOTICE.md](https://github.com/Nipeno/MintCap/blob/main/NOTICE.md) so you can rely on it.
+
+        Being specific gets you a faster answer than a general "can I use this?".
+  - type: dropdown
+    id: what
+    attributes:
+      label: What do you want to do?
+      options:
+        - Include MintCap in a modpack / graphics pack / server download
+        - Mirror or re-upload the zip somewhere else
+        - Distribute a modified build
+        - Something commercial (paid pack, paid tier, donation perk, resale)
+        - Use the MintCap name or branding for something
+        - Other (explained below)
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Describe it
+      description: What exactly would be distributed, to whom, and where would people get it?
+      placeholder: |
+        e.g. "I run a FiveM racing server with ~200 regulars. I'd like to put the zip on our
+        download page next to our graphics pack, unmodified, with a link back to the repo."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Link
+      description: Your server, community, site, or project — whatever helps identify who is asking.
+    validations:
+      required: false
+  - type: dropdown
+    id: money
+    attributes:
+      label: Is money involved anywhere?
+      description: Answer honestly — donations to a server whose players use MintCap are fine on their own (LICENSE section 4). Paid packs, paid tiers and perks are what needs asking.
+      options:
+        - "No, nothing is paid"
+        - "There are donations, but MintCap isn't tied to them"
+        - "Yes, it would be part of something paid"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before you submit
+      options:
+        - label: I've read the [LICENSE](https://github.com/Nipeno/MintCap/blob/main/LICENSE), and I understand permission is specific to what I described, can be withdrawn on notice, and isn't transferable.
+          required: true
+        - label: I understand that unmodified copies from the [Releases page](https://github.com/Nipeno/MintCap/releases) are what everyone can already link to, and a link may be all I actually need.
+          required: true

@@ -3,3 +3,6 @@ contact_links:
   - name: Install guide (README)
     url: https://github.com/Nipeno/MintCap#readme
     about: Read this first — covers the ReShade5 enable step, the overlay key, and VSync.
+  - name: Licence terms
+    url: https://github.com/Nipeno/MintCap/blob/main/LICENSE
+    about: What you may and may not do. Using it is free and needs no permission; redistributing or selling it does.

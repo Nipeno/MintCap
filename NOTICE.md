@@ -28,8 +28,8 @@ Where permission has been given, it is recorded here so it can be relied on.
 
 **No standing permissions have been granted.**
 
-If you need permission for something Section 3 forbids, ask:
-<https://github.com/Nipeno/MintCap/issues>
+If you need permission for something Section 3 forbids, ask with the
+[permission request form](https://github.com/Nipeno/MintCap/issues/new?template=permission_request.yml).
 
 ## Third-party software
 

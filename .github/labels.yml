@@ -2,11 +2,11 @@
 # Copyright (c) 2026 Nipeno. All rights reserved.
 # Source available, not open source. See LICENSE.
 #
-# Label manifest for MintCap.
-# Apply with: ./.github/sync-labels.sh   (needs gh CLI, authed, repo cloned)
-# color = 6-hex, no leading '#'.
+# Apply with: ./.github/sync-labels.sh          (dry-run drift report)
+#             ./.github/sync-labels.sh --prune  (also delete labels not listed here)
+# color = 6-hex, no leading '#'. Needs gh CLI, authed.
 
-# --- type ---
+# --- type: what kind of issue is this ---
 - name: bug
   color: d73a4a
   description: Something isn't working
@@ -15,12 +15,29 @@
   description: New feature or improvement
 - name: docs
   color: 0075ca
-  description: README / BUILDING / install guides
+  description: README / BUILDING / install guide wording
 - name: question
   color: d876e3
-  description: Usage / install question
+  description: Usage or install question
+- name: security
+  color: b60205
+  description: Security report (see SECURITY.md - do not post details publicly)
 
-# --- area ---
+# --- licensing: the MintCap License, and asks under it ---
+- name: license
+  color: 93e9be
+  description: Licence terms, attribution, or what the licence allows
+- name: permission-request
+  color: 93e9be
+  description: Asking to redistribute, bundle, mirror, or sell (LICENSE section 3)
+- name: permission-granted
+  color: 0e8a16
+  description: Permission given in writing - recorded in NOTICE.md
+- name: permission-declined
+  color: 5f2c2c
+  description: Permission not given; the licence default applies
+
+# --- area: which part of the project ---
 - name: area:addon
   color: 1d76db
   description: The MintCap.addon64 DLL (src/main.cpp)
@@ -31,33 +48,30 @@
   color: 1d76db
   description: Zip bundle, Enable-ReShade.bat, Install Guide.html
 
-# --- environment ---
+# --- environment: where it happens ---
 - name: fivem
   color: c5def5
-  description: FiveM-specific (CitizenFX.ini, plugins path)
+  description: FiveM-specific (CitizenFX.ini, plugins path, pure mode)
 - name: graphics-pack
   color: c5def5
   description: NVE / QuantV interaction
 - name: reshade-version
   color: c5def5
-  description: ReShade / addon API version mismatch
+  description: ReShade or addon API version mismatch
 
-# --- workflow ---
+# --- workflow: where it stands ---
 - name: needs-triage
   color: ededed
   description: Not yet reviewed
 - name: needs-info
   color: fef2c0
-  description: Waiting on reporter
-- name: wontfix
-  color: ffffff
-  description: Out of scope (e.g. configurable cap)
-- name: good first issue
-  color: 7057ff
-  description: Good for newcomers
-- name: help wanted
-  color: 008672
-  description: Extra attention is needed
+  description: Waiting on the reporter
+- name: needs-repro
+  color: fef2c0
+  description: Can't reproduce it yet
 - name: blocked-on-tester
   color: fbca04
-  description: Waiting on real Windows/FiveM verification
+  description: Waiting on verification on real hardware
+- name: wontfix
+  color: ffffff
+  description: Out of scope by design - see CONTRIBUTING.md ground rules
