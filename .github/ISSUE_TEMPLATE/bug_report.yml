@@ -6,7 +6,36 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting. Please fill this out so we can reproduce. Most issues are install/ReShade-version related — the questions below catch the common ones.
+        Thanks for reporting. Most problems turn out to be install- or ReShade-version-related, and
+        the questions below catch the common ones. Anything you don't know, leave blank — a partial
+        report beats no report.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I've read the install guide that came with the zip (or the README).
+          required: true
+        - label: I searched the [existing issues](https://github.com/Nipeno/MintCap/issues?q=is%3Aissue) for this.
+          required: true
+  - type: dropdown
+    id: game
+    attributes:
+      label: Where does this happen?
+      options:
+        - FiveM
+        - Another game
+        - Not game-specific (docs, the zip, the .bat, CI...)
+    validations:
+      required: true
+  - type: input
+    id: game-name
+    attributes:
+      label: Which game?
+      description: Only if you picked "Another game" above.
+      placeholder: e.g. Cyberpunk 2077, Skyrim SE, RDR2
+    validations:
+      required: false
   - type: textarea
     id: what-happened
     attributes:
@@ -20,18 +49,20 @@ body:
     attributes:
       label: Steps to reproduce
       placeholder: |
-        1. Extracted zip to ...
-        2. Launched FiveM
-        3. ...
+        1. Extracted the zip to ...
+        2. Put MintCap.addon64 in ...
+        3. Launched the game, pressed Home
+        4. ...
     validations:
       required: true
   - type: dropdown
     id: install-type
     attributes:
-      label: Install type
+      label: How is ReShade installed?
       options:
-        - Fresh ReShade (used the bundled dxgi.dll)
-        - Existing graphics pack (NVE / QuantV) — added only the addon
+        - Used the bundled dxgi.dll from the zip
+        - Installed ReShade myself with the official installer (add-on support)
+        - Already had it from a graphics pack (NVE / QuantV / other)
         - Other / not sure
     validations:
       required: true
@@ -39,37 +70,39 @@ body:
     id: reshade-version
     attributes:
       label: ReShade version
-      description: Shown on "About" tab of the ReShade overlay when you open it.
-      placeholder: e.g. 6.7.3
+      description: Shown on the "About" tab of the ReShade overlay.
+      placeholder: e.g. 6.8.0
     validations:
       required: false
-  - type: dropdown
-    id: enabled
+  - type: input
+    id: addon-version
     attributes:
-      label: Did you run Enable-ReShade.bat (or add the ReShade5 line to CitizenFX.ini)?
-      options:
-        - "Yes — ran the .bat"
-        - "Yes — edited CitizenFX.ini by hand"
-        - "No"
-        - "Not sure"
+      label: MintCap version
+      description: Shown in the overlay under "Made by Nipeno", and in the zip name (MintCap_v<ver>.zip).
+      placeholder: e.g. v1.0.0
     validations:
       required: true
   - type: input
     id: overlay-key
     attributes:
       label: Overlay key tried
-      description: Default is Home; NVE remaps it to Insert. Did either open the overlay?
+      description: Default is Home, but some setups (NVE, for one) remap it to Insert. Did either open the ReShade menu?
       placeholder: e.g. Home — nothing; Insert — opened
     validations:
       required: false
-  - type: input
-    id: addon-version
+  - type: dropdown
+    id: enabled
     attributes:
-      label: Addon version
-      description: Shown in the overlay under "Made by Nipeno", and in the zip name (MintCap_v<ver>.zip).
-      placeholder: e.g. v2.3.0
+      label: FiveM only — did you run Enable-ReShade.bat?
+      description: FiveM blocks ReShade until it's acknowledged once in CitizenFX.ini. Skip this if you're not on FiveM.
+      options:
+        - "Yes — ran the .bat"
+        - "Yes — edited CitizenFX.ini by hand"
+        - "No"
+        - "Not sure"
+        - "Not applicable — not FiveM"
     validations:
-      required: true
+      required: false
   - type: input
     id: windows
     attributes:
@@ -81,6 +114,9 @@ body:
     id: logs
     attributes:
       label: ReShade log
-      description: Attach or paste FiveM.app/ReShade.log if you have it. Drag-drop the file here.
+      description: |
+        `ReShade.log` sits next to the ReShade `.dll` you installed — for FiveM that's
+        `%LOCALAPPDATA%\FiveM\FiveM.app`, for other games it's usually the folder with the game's
+        `.exe`. MintCap writes to it, so it often names the problem outright. Drag-drop the file here.
     validations:
       required: false

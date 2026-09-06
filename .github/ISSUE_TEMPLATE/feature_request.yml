@@ -6,7 +6,21 @@ body:
   - type: markdown
     attributes:
       value: |
-        Heads up: the addon deliberately stays small — one adjustable cap, no telemetry, no extra dependencies. Suggestions that keep it that way are the easiest to land.
+        The addon deliberately stays small — one adjustable cap, no telemetry, no extra
+        dependencies — so suggestions that keep it that way are the easiest to land. The
+        [ground rules](https://github.com/Nipeno/MintCap/blob/main/CONTRIBUTING.md#ground-rules)
+        list what gets declined regardless of how well it's built.
+
+        **Describe it here rather than writing the code.** This project doesn't accept pull
+        requests ([why](https://github.com/Nipeno/MintCap/blob/main/CONTRIBUTING.md#code-contributions));
+        if your idea fits, it gets built and you're credited in the changelog.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I searched the [existing issues](https://github.com/Nipeno/MintCap/issues?q=is%3Aissue) for this.
+          required: true
   - type: textarea
     id: problem
     attributes:
@@ -20,6 +34,14 @@ body:
       label: Proposed solution
     validations:
       required: true
+  - type: input
+    id: context
+    attributes:
+      label: Game / setup
+      description: Where would this matter? Helps judge whether it's FiveM-specific or general.
+      placeholder: e.g. FiveM racing server, or "any game — general"
+    validations:
+      required: false
   - type: textarea
     id: alternatives
     attributes:
