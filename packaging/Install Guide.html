@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<!--
+  MintCap - end-user install guide, shipped inside the release zip.
+  Copyright (c) 2026 Nipeno. All rights reserved.
+  Source available, not open source. See LICENSE.txt next to this file.
+-->
+<html lang="en" data-platform="fivem">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MintCap - Install Guide</title>
+<style>
+  :root{
+    --bg:#080c11; --panel:#111820; --panel2:#0d141b; --line:#20303a;
+    --text:#e8f2ee; --muted:#9db3ac; --accent:#93e9be; --accent2:#5fbf9b;
+    --good:#46d39a; --warn:#ffcf5c;
+    --p:0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; min-height:100vh; color:var(--text); line-height:1.6;
+    background-color:var(--bg);
+    background-image:linear-gradient(180deg,#0a1512 0%,#080c11 55%,#06090d 100%);
+    background-attachment:fixed;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Mint aurora: two soft bands behind the content, both reacting to scroll progress (--p),
+     the top one receding as you read and the bottom one rising to meet you. */
+  .aurora{
+    position:fixed; left:-10vw; right:-10vw; height:78vh; z-index:-1; pointer-events:none;
+    filter:blur(64px) saturate(120%); will-change:transform,opacity;
+  }
+  .aurora.top{
+    top:-22vh;
+    background:
+      radial-gradient(58% 100% at 28% 30%, rgba(147,233,190,.34), transparent 70%),
+      radial-gradient(48% 92% at 74% 18%, rgba(95,191,155,.30), transparent 72%);
+    transform:translate3d(0, calc(var(--p) * 16vh), 0);
+    opacity:calc(1 - var(--p) * .55);
+  }
+  .aurora.bottom{
+    bottom:-26vh;
+    background:
+      radial-gradient(56% 100% at 68% 70%, rgba(95,191,155,.30), transparent 70%),
+      radial-gradient(46% 88% at 22% 82%, rgba(70,211,154,.24), transparent 72%);
+    transform:translate3d(0, calc(var(--p) * -14vh), 0);
+    opacity:calc(.18 + var(--p) * .72);
+  }
+
+  /* Cards start hidden ONLY once JS has added .reveal - no script, no hiding. */
+  .reveal{opacity:0; transform:translateY(16px)}
+  .reveal.in{opacity:1; transform:none; transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1)}
+  @media (prefers-reduced-motion: reduce){
+    .aurora{transform:none !important; opacity:.5 !important}
+    .reveal{opacity:1 !important; transform:none !important}
+  }
+
+  .wrap{position:relative; max-width:760px; margin:0 auto; padding:48px 22px 80px}
+  header{text-align:center; margin-bottom:30px}
+  h1{font-size:2rem; margin:.4em 0 .15em; letter-spacing:.2px}
+  .tag{color:var(--muted); font-size:1.02rem; margin:0}
+  .by{color:var(--muted); font-size:.92rem; margin-top:14px}
+  .by a, a.subtle{color:inherit; text-decoration:none; border-bottom:1px dotted var(--muted); transition:.15s}
+  .by a:hover, a.subtle:hover{color:var(--text); border-bottom-color:var(--text)}
+  .btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px}
+  .btn{
+    display:inline-block; padding:9px 16px; border-radius:9px; text-decoration:none;
+    font-weight:600; font-size:.92rem; border:1px solid var(--line); color:var(--text);
+    background:var(--panel); transition:.15s;
+  }
+  .btn:hover{border-color:var(--accent); color:#fff; transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(180deg,#1e3b31,#132720); border-color:#2f5f4d}
+
+  /* Segmented tabs: which install path you are on. */
+  .tabs{
+    display:inline-flex; gap:6px; margin-top:24px; padding:5px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:999px;
+  }
+  .tab{
+    appearance:none; cursor:pointer; font:inherit; font-weight:600; font-size:.92rem;
+    padding:8px 20px; border-radius:999px; border:1px solid transparent;
+    background:transparent; color:var(--muted); transition:.15s;
+  }
+  .tab:hover{color:var(--text)}
+  .tab[aria-selected="true"]{
+    background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06110c; border-color:#2f5f4d;
+  }
+  .tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* Path switching. Static HTML says fivem, so a browser with JS off still gets a full guide. */
+  html[data-platform="general"] .only-fivem{display:none}
+  html[data-platform="fivem"] .only-general{display:none}
+
+  h2{font-size:1.25rem; margin:42px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  p{margin:.6em 0}
+  a{color:var(--accent)}
+  code,kbd{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9em;
+    background:#16202a; border:1px solid var(--line); border-radius:5px; padding:1px 6px;
+  }
+  kbd{box-shadow:0 1px 0 #000; font-weight:600}
+  pre{
+    background:var(--panel2); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:.88rem;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:#cfe0d9;
+  }
+  ol.steps{list-style:none; counter-reset:s; padding:0; margin:0}
+  ol.steps>li{
+    counter-increment:s; position:relative; background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:18px 20px 18px 64px; margin:14px 0;
+  }
+  ol.steps>li::before{
+    content:counter(s); position:absolute; left:16px; top:16px; width:34px; height:34px;
+    display:grid; place-items:center; border-radius:50%; font-weight:700;
+    background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#06110c;
+  }
+  ol.steps>li b{color:#fff}
+  .lead{font-weight:600; font-size:1.05rem; margin:0 0 4px}
+  .note{color:var(--muted); font-size:.92rem}
+  .callout{border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin:16px 0; background:var(--panel2)}
+  .callout.good{border-color:#1f6b50; background:#0e1b16}
+  .callout.warn{border-color:#6b5a1f; background:#1a1710}
+  .callout .ttl{font-weight:700; margin:0 0 4px}
+  .callout.good .ttl{color:var(--good)} .callout.warn .ttl{color:var(--warn)}
+  .pure .ttl{font-size:1.05rem}
+  ul{padding-left:1.25em} li{margin:.25em 0}
+  footer{margin-top:48px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:.88rem; text-align:center}
+  footer a{color:inherit; text-decoration:none; border-bottom:1px dotted var(--muted); transition:.15s}
+  footer a:hover{color:var(--text); border-bottom-color:var(--text)}
+</style>
+</head>
+<body>
+<div class="aurora top" aria-hidden="true"></div>
+<div class="aurora bottom" aria-hidden="true"></div>
+<div class="wrap">
+
+  <header>
+    <h1>MintCap</h1>
+    <p class="tag"><span class="only-fivem">An FPS limiter for <b>FiveM</b>.</span><span class="only-general">An FPS limiter for anything ReShade runs on.</span> Caps your game at the <b>FPS you choose</b>.</p>
+    <p class="by">Made by <a href="https://nipeno.dev" target="_blank" rel="noopener"><b>Nipeno</b></a></p>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/Nipeno/MintCap" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://github.com/Nipeno/MintCap/releases/latest" target="_blank" rel="noopener">Latest release</a>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Where are you installing MintCap?">
+      <button class="tab" type="button" role="tab" id="tab-fivem" aria-controls="panel-fivem" aria-selected="true" data-target="fivem">FiveM</button>
+      <button class="tab" type="button" role="tab" id="tab-general" aria-controls="panel-general" aria-selected="false" data-target="general">Any other game</button>
+    </div>
+  </header>
+
+  <h2>How to install</h2>
+
+  <!-- ============================ FiveM ============================ -->
+  <div class="only-fivem" id="panel-fivem" role="tabpanel" aria-labelledby="tab-fivem">
+    <div class="callout good pure card">
+      <p class="ttl">✓ Pure mode friendly</p>
+      Pure mode blocks <b>modified game files</b>. MintCap isn't one - it's a ReShade add-on, and FiveM
+      has built-in support for loading ReShade, so it runs on pure-mode servers.
+      <p class="note" style="margin-top:8px">Server rules still come first: if a server bans ReShade
+      outright, that covers this too.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="card">
+        <p class="lead">Open your FiveM <b>plugins</b> folder.</p>
+        Press <kbd>Win</kbd>+<kbd>R</kbd>, paste this, press Enter:
+        <pre>%localappdata%\FiveM\FiveM.app\plugins</pre>
+        A folder window opens - leave it open.
+        <p class="note">Nothing opened / error? Then FiveM isn't in the default spot. Open <b>your</b> FiveM
+        install folder instead (the one with <code>FiveM.exe</code>) and go into <code>FiveM.app\plugins</code> inside it.</p>
+      </li>
+      <li class="card">
+        <p class="lead">Drag the add-on files <b>into</b> that folder.</p>
+        In the zip, open the <b>Copy-these-into-plugins</b> folder. Drag its three files -
+        <code>dxgi.dll</code>, <code>MintCap.addon64</code>, <code>Enable-ReShade.bat</code> - into the plugins folder.
+        <div class="callout warn" style="margin-top:12px">
+          <p class="ttl">Already have ReShade? <span class="note" style="font-weight:400">(NVE, QuantV, other graphics pack)</span></p>
+          Don't drag <code>dxgi.dll</code> - that <b>is</b> ReShade, and you already have it. Just drag the
+          other two files and leave your existing ReShade completely alone.
+          <p class="note" style="margin-top:8px">ReShade can be installed under a few different file names
+          (<code>dxgi.dll</code>, <code>d3d11.dll</code> and others) - whichever yours uses, you don't need
+          to touch it.</p>
+        </div>
+        <p class="note">Drag the <b>files</b> themselves, not the folder - all three should sit
+        <b>directly</b> inside the plugins folder, not inside a sub-folder.</p>
+      </li>
+      <li class="card">
+        <p class="lead">Allow ReShade in FiveM <span class="note">(one time)</span>.</p>
+        In the plugins folder you just filled, double-click <b>Enable-ReShade.bat</b>. It sets everything up by itself - press a key to close it.
+        <ul>
+          <li>Blue <b>"Windows protected your PC"</b> box? Click <b>More info → Run anyway</b>. (The source is public - open it in Notepad first if you like.)</li>
+          <li>Says it couldn't find FiveM? See <a class="subtle" href="#manual">If the .bat can't find FiveM</a> below.</li>
+        </ul>
+      </li>
+      <li class="card">
+        <p class="lead">Start FiveM and join a server.</p>
+      </li>
+      <li class="card">
+        <p class="lead">Turn the limiter ON.</p>
+        Press <kbd>Home</kbd> to open the ReShade menu. <span class="note">(Some setups use <kbd>Insert</kbd> instead - if Home does nothing, try Insert.)</span>
+        First time, ReShade shows a tutorial pop-up: click <b>Continue</b> or <b>Skip Tutorial</b>.
+        Find the <b>&quot;MintCap&quot;</b> window and set <b>FPS cap</b> to the number you want -
+        or click one of the presets. <b>0 means unlimited</b> (no cap at all).
+        <div class="callout good" style="margin-top:14px"><p class="ttl">✓ Done - your choice is saved for next time.</p></div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ======================== Any other game ======================== -->
+  <div class="only-general" id="panel-general" role="tabpanel" aria-labelledby="tab-general">
+    <p>MintCap is a plain ReShade add-on, so it works in any game ReShade runs on. It needs the
+    <b>add-on-enabled</b> build of ReShade - the standard build won't load add-ons at all.</p>
+    <p class="note">Two things in the zip you can ignore here: the folder named
+    <b>Copy-these-into-plugins</b> (that name is for a different install path - the files inside are
+    the same ones) and <code>Enable-ReShade.bat</code>, which fixes a problem your game doesn't
+    have.</p>
+
+    <ol class="steps">
+      <li class="card">
+        <p class="lead">Get ReShade <b>with add-on support</b> into your game.</p>
+        Easiest way: run the official installer from
+        <a href="https://reshade.me" target="_blank" rel="noopener">reshade.me</a>, pick your game, and choose the
+        build <b>with full add-on support</b>.
+        <p class="note" style="margin-top:8px">Already have add-on-enabled ReShade in that game? Skip this step
+        entirely and leave it alone.</p>
+        <div class="callout warn" style="margin-top:12px">
+          <p class="ttl">Or use the ReShade in this zip</p>
+          The <code>dxgi.dll</code> in the zip <b>is</b> add-on-enabled ReShade. Copy it next to your game's
+          <code>.exe</code> - but the correct name depends on the graphics API the game uses:
+          <code>dxgi.dll</code> (DX10-12), <code>d3d11.dll</code>, <code>d3d12.dll</code>,
+          <code>d3d9.dll</code> or <code>opengl32.dll</code>. Rename it to match your game's API.
+          <p class="note" style="margin-top:8px">The installer picks that name for you, which is why it's the
+          easier route.</p>
+        </div>
+      </li>
+      <li class="card">
+        <p class="lead">Put <code>MintCap.addon64</code> next to the ReShade file.</p>
+        ReShade looks for add-ons in <b>its own folder</b> - the same folder as the ReShade <code>.dll</code>,
+        which for most games is the folder holding the game's <code>.exe</code>. Drop
+        <code>MintCap.addon64</code> in there.
+        <p class="note">Using a custom location? ReShade reads <code>AddonPath</code> under
+        <code>[ADDON]</code> in <code>ReShade.ini</code> - if that's set, the add-on goes there instead.</p>
+      </li>
+      <li class="card">
+        <p class="lead">Start the game and turn the limiter ON.</p>
+        Press <kbd>Home</kbd> to open the ReShade menu <span class="note">(some setups use <kbd>Insert</kbd>)</span>.
+        Find the <b>&quot;MintCap&quot;</b> window and set <b>FPS cap</b> to the number you want - or click a
+        preset. <b>0 means unlimited</b> (no cap at all).
+        <div class="callout good" style="margin-top:14px"><p class="ttl">✓ Done - your choice is saved for next time.</p></div>
+      </li>
+    </ol>
+  </div>
+
+  <h2>Which number should I pick?</h2>
+  <p><b>0</b> means unlimited - the add-on stays out of the way. Any number above 0 is the frame rate
+  it holds you to.</p>
+  <ul class="only-fivem">
+    <li><b>GTA:</b> its physics is tied to frame rate, so cars handle differently at different FPS.
+    Racing servers commonly ask everyone to sit at 60 for exactly that reason - if you're on one,
+    use the number the server asks for.</li>
+    <li><b>Otherwise, match your monitor</b> (60, 144, 240...): frames your screen can't show are
+    wasted work.</li>
+    <li><b>A steady lower number</b> often feels smoother than an unsteady high one. If your FPS
+    swings between 80 and 140, capping at 80 can beat both.</li>
+  </ul>
+  <ul class="only-general">
+    <li><b>Some games tie physics or feel to the frame rate.</b> If yours is one of them, use the
+    number it expects rather than the highest you can hold.</li>
+    <li><b>Otherwise, match your monitor</b> (60, 144, 240...): frames your screen can't show are
+    wasted work.</li>
+    <li><b>A steady lower number</b> often feels smoother than an unsteady high one. If your FPS
+    swings between 80 and 140, capping at 80 can beat both.</li>
+  </ul>
+
+  <h2>Already have ReShade but don't see the window?</h2>
+  <p>Good news: you almost certainly <b>don't need to replace anything</b>. This add-on works with any
+  ReShade from <b>6.1 onwards</b>, which covers current graphics packs. Just make sure
+  <code>MintCap.addon64</code> is sitting
+  <span class="only-fivem">in your plugins folder</span><span class="only-general">next to your ReShade
+  <code>.dll</code></span> and leave the rest of your setup exactly as it is.</p>
+  <p class="only-general note">If ReShade's menu has no <b>Add-ons</b> tab at all, your ReShade was
+  installed <b>without</b> add-on support - reinstall it with the add-on build and nothing else changes.</p>
+  <p>If the <b>&quot;MintCap&quot;</b> window still doesn't show up, first make sure you tried
+  <kbd>Home</kbd> <i>and</i> <kbd>Insert</kbd>, then open <code>ReShade.log</code>
+  <span class="only-fivem">in your <code>FiveM.app</code> folder</span><span class="only-general">next to
+  the ReShade <code>.dll</code></span> and look near the top for a line like:</p>
+  <pre>Failed to register add-on, because the requested API version (11) is not supported (N)!</pre>
+  <p>That means your ReShade is older than 6.1.
+  <span class="only-fivem">The best fix is to <b>update your graphics pack</b> - current versions ship a
+  recent ReShade, and that keeps everything else about your setup intact.</span>
+  <span class="only-general">Update ReShade to a current version and everything else stays as it is.</span></p>
+  <p>If you'd rather update ReShade by hand: <b>Important</b> - ReShade isn't always called
+  <code>dxgi.dll</code>. Depending on how it was installed the file may be named <code>dxgi.dll</code>,
+  <code>d3d11.dll</code>, <code>d3d12.dll</code>, <code>d3d9.dll</code> or <code>opengl32.dll</code>.
+  Look in <span class="only-fivem">your plugins folder</span><span class="only-general">your game's
+  folder</span> to see which one you have.</p>
+  <p>Then take the zip's <code>dxgi.dll</code> (from the <b>Copy-these-into-plugins</b> folder), copy it
+  in and <b>rename it to match the file you already have</b>, replacing it.
+  Renaming matters: dropping a <code>dxgi.dll</code> next to an existing <code>d3d11.dll</code> does
+  nothing, because the old one still loads first. It's the latest official ReShade and still runs
+  graphics packs fine.</p>
+  <p class="note">Back up the file you're replacing first, so you can put it back if anything misbehaves.</p>
+
+  <div class="only-fivem">
+    <h2 id="manual">If the .bat can't find FiveM <span class="note" style="font-weight:400">(manual allow)</span></h2>
+    <p>Only needed if <code>Enable-ReShade.bat</code> couldn't locate FiveM. The first time you launch with
+    ReShade, FiveM's console shows red text like:</p>
+    <pre>Blocked load of ReShade version 5 or higher ...
+add the following section to &lt;path&gt;\CitizenFX.ini:
+   [Addons]
+   ReShade5=ID:xxxxxxxx acknowledged that ReShade 5.x has a bug...</pre>
+    <ol>
+      <li>Fully close FiveM.</li>
+      <li>Open the file it named - <code>CitizenFX.ini</code>, in your <code>FiveM.app</code> folder (the console shows the exact path).</li>
+      <li>Add the two lines <b>exactly as your own console showed them</b>:
+        <pre>[Addons]
+ReShade5=ID:xxxxxxxx acknowledged that ReShade 5.x has a bug that will lead to game crashes</pre>
+        <span class="note">The ID (<code>xxxxxxxx</code>) is <b>unique to your PC</b> - copy it from your own console, not this example.</span>
+      </li>
+      <li>Save and start FiveM again.</li>
+    </ol>
+  </div>
+
+  <h2>How to use</h2>
+  <ul>
+    <li>Press <kbd>Home</kbd> (or <kbd>Insert</kbd>) to open/close the ReShade menu.</li>
+    <li>In the <b>&quot;MintCap&quot;</b> window: type a number in <b>FPS cap</b>, or click a
+    preset. It applies instantly.</li>
+    <li><b>0 = unlimited.</b> Click <b>Off</b> to remove the cap without closing anything.</li>
+    <li>Your choice is saved and stays set next launch.</li>
+    <li><b>Turn VSync off in-game.</b> The limiter and VSync each wait for their own timing, and
+    running both together can stack those waits into stutter or an effective 30 FPS. Use one or
+    the other - this add-on instead of VSync.</li>
+  </ul>
+
+  <h2>How to uninstall</h2>
+  <ol>
+    <li class="only-fivem">Close FiveM.</li>
+    <li class="only-general">Close the game.</li>
+    <li class="only-fivem">Open <code>%localappdata%\FiveM\FiveM.app\plugins</code>.</li>
+    <li class="only-general">Open the folder holding the ReShade <code>.dll</code> (usually your game's folder).</li>
+    <li>Delete <b>MintCap.addon64</b>.</li>
+    <li>Only if you installed ReShade <b>just</b> for this and want it gone too, also delete the ReShade
+    file you added - <code>dxgi.dll</code> if you used our zip. If a graphics pack put ReShade there
+    (under whatever name), <b>leave it alone</b>.</li>
+  </ol>
+
+  <footer>
+    <p><b>Bans and server rules are your risk.</b> MintCap loads into a running game process. Many
+    games, platforms, servers and anti-cheat systems don't allow that, and the only people who decide
+    are the ones running them - you could be kicked, suspended or permanently banned, and lose access
+    to a game or an account. Check what's allowed where you play <b>before</b> you install it.
+    MintCap is provided as is, with no warranty of any kind, and the author accepts no liability for
+    any consequence of using it, bans included. See sections 8 and 9 of
+    <code>LICENSE.txt</code>.</p>
+    <p>Still stuck, or found a bug? <a href="https://github.com/Nipeno/MintCap/issues/new/choose" target="_blank" rel="noopener"><b>Open an issue on GitHub</b></a> -
+    that's where add-on problems get handled.</p>
+    <p>Free to use · source available (see <code>LICENSE.txt</code>) · <a href="https://github.com/Nipeno/MintCap" target="_blank" rel="noopener">github.com/Nipeno/MintCap</a></p>
+  </footer>
+
+</div>
+<script>
+(function(){
+  var root = document.documentElement;
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+
+  // Cards hidden from JS only, never from static CSS: with scripting off the page is
+  // complete, just without the reveal.
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var io = null;
+
+  if (!reduce && 'IntersectionObserver' in window) {
+    cards.forEach(function(c){ c.classList.add('reveal'); });
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    cards.forEach(function(c){ io.observe(c); });
+  }
+
+  function selectPath(p){
+    root.setAttribute('data-platform', p);
+    tabs.forEach(function(t){
+      t.setAttribute('aria-selected', String(t.getAttribute('data-target') === p));
+    });
+    // Cards on the newly shown path were display:none, so they never intersected and are
+    // still sitting at opacity 0. Reveal whatever is on screen now.
+    if (io) {
+      cards.forEach(function(c){
+        if (c.offsetParent !== null && !c.classList.contains('in')) {
+          c.classList.add('in'); io.unobserve(c);
+        }
+      });
+    }
+  }
+
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ selectPath(t.getAttribute('data-target')); });
+    t.addEventListener('keydown', function(ev){
+      if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+      ev.preventDefault();
+      var next = tabs[(i + (ev.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      next.focus(); selectPath(next.getAttribute('data-target'));
+    });
+  });
+
+  if (reduce) return;
+
+  // Single scroll-progress variable; the aurora is the only thing reading it.
+  var ticking = false;
+  function update(){
+    var sy = window.scrollY || window.pageYOffset || 0;
+    var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    root.style.setProperty('--p', Math.min(1, sy / max).toFixed(4));
+    ticking = false;
+  }
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+  addEventListener('scroll', onScroll, {passive:true});
+  addEventListener('resize', onScroll, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

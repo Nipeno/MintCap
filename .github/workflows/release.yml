@@ -1,0 +1,120 @@
+# MintCap - release pipeline: build at a v* tag and publish the bundle.
+# Copyright (c) 2026 Nipeno. All rights reserved.
+# Source available, not open source. See LICENSE.
+
+name: Release
+
+# Release pipeline: on a v* tag, build the addon at that version and attach the
+# end-user bundle to the GitHub Release. Kept separate from the dev CI (build.yml) so
+# only this workflow ever needs write access to the repo.
+# workflow_dispatch is a dry run: it builds and uploads an artifact but never publishes,
+# even when dispatched against a tag ref (the publish step checks the event, not the ref).
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # attach assets to the Release
+
+# Serialise releases per ref, but never cancel one: killing a publish half-way could
+# leave a Release created with no asset attached.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Version from the tag (single source of truth) --------------------
+      - name: Resolve addon version
+        run: |
+          # Plain vX.Y.Z only, anchored at both ends. CMake's project(VERSION) rejects a
+          # prerelease suffix, and an unanchored match would quietly turn v2.3.0-beta.1 into
+          # 2.3.0 - shipping a prerelease under the final version's name. Fail loudly instead.
+          $ver = '0.0.0'
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            if ($env:GITHUB_REF_NAME -match '^v([0-9]+\.[0-9]+\.[0-9]+)$') {
+              $ver = $Matches[1]
+            } else {
+              Write-Error "Tag '$($env:GITHUB_REF_NAME)' is not a plain vX.Y.Z release tag. Refusing to build a release from it."
+              exit 1
+            }
+          }
+          Write-Host "Addon version: $ver"
+          "mintcap_version=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Configure (MSVC x64)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DMINTCAP_VERSION="${{ env.mintcap_version }}"
+
+      - name: Build (Release)
+        run: cmake --build build --config Release
+
+      # --- Fetch the latest official ReShade (add-on build) -----------------
+      # Shared with build.yml; the pinned fallback lives in the action.
+      - name: Resolve + download latest ReShade
+        id: reshade
+        uses: ./.github/actions/fetch-reshade
+
+      # --- Assemble the drag-and-drop bundle --------------------------------
+      - name: Assemble bundle
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          New-Item -ItemType Directory -Force -Path 'dist/Copy-these-into-plugins' | Out-Null
+          Copy-Item build/Release/MintCap.addon64 'dist/Copy-these-into-plugins/'
+          Copy-Item dxgi.dll                             'dist/Copy-these-into-plugins/'
+          Copy-Item packaging/Enable-ReShade.bat         'dist/Copy-these-into-plugins/'
+          Copy-Item 'packaging/Install Guide.html'       dist/
+          Copy-Item third_party/ReShade-LICENSE.txt      dist/
+          Copy-Item third_party/Dear-ImGui-LICENSE.txt   dist/
+          Copy-Item third_party/THIRD-PARTY-NOTICES.txt  dist/
+          Copy-Item LICENSE                              dist/LICENSE.txt
+          # The zip name carries the addon version, so record the bundled ReShade here.
+          "${{ steps.reshade.outputs.version }}" | Out-File -FilePath dist/reshade-version.txt -Encoding utf8 -NoNewline
+          $zip = "MintCap_v$env:mintcap_version.zip"
+          Compress-Archive -Path dist/* -DestinationPath $zip -Force
+          "bundle_zip=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      # --- Dry run: keep the artifact so a manual trigger is still useful ----
+      - name: Upload bundle (dry run)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MintCap-dryrun
+          path: ${{ env.bundle_zip }}
+
+      # --- Release (only when a v* tag is PUSHED) ---------------------------
+      # Gated on the event, not just the ref: the Actions UI lets you dispatch this
+      # workflow against a tag, which would otherwise satisfy a ref-only check and
+      # publish a real Release from what is supposed to be a dry run.
+      - name: Publish Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          body: |
+            **An FPS limiter for FiveM.** Type a number, and your frame rate holds there.
+            Type 0 and there is no cap at all. Also works in any other game ReShade runs on.
+
+            **Pure mode friendly** - pure mode blocks modified game files, and this is not one:
+            it is a ReShade add-on, and FiveM has built-in support for loading ReShade.
+
+            **Install:** download the zip, extract it, open **`Install Guide.html`** and follow it.
+            It opens on the FiveM path, with an *Any other game* tab next to it, and the zip
+            bundles ReShade (**${{ steps.reshade.outputs.version }}**) so it is the only download
+            you need.
+
+            **Bans and server rules are your risk** - this loads into a running game process, and
+            the people who run the game, platform or server decide whether that is allowed. Check
+            before you install. No warranty, no liability: see sections 8 and 9 of `LICENSE.txt`.
+
+            Something not working? [Open an issue](https://github.com/Nipeno/MintCap/issues/new/choose).
+            Free to use, source available.
+          files: ${{ env.bundle_zip }}

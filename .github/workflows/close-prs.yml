@@ -1,0 +1,60 @@
+# MintCap - politely close unsolicited pull requests.
+# Copyright (c) 2026 Nipeno. All rights reserved.
+# Source available, not open source. See LICENSE.
+#
+# GitHub has no switch to disable pull requests, so this is the enforcement for the
+# policy in CONTRIBUTING.md: code contributions are declined because sole copyright is
+# what keeps the licence's termination clause workable. Issues stay open and welcome.
+#
+# SECURITY: pull_request_target runs with a write-scoped token in the context of the
+# BASE repo, so it must never check out or execute the PR's code. There is no checkout
+# step here and there must never be one - only API calls against the PR's metadata.
+name: Close PRs
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+concurrency:
+  group: close-prs-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  close:
+    # The maintainer's own PRs are left alone - OWNER covers pushes from this account,
+    # and a PR whose head is this same repo is not an outside contribution.
+    if: |
+      github.event.pull_request.author_association != 'OWNER' &&
+      github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const number = context.payload.pull_request.number;
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: number,
+              body: [
+                "Thanks for taking the time to write this - and sorry, this repo does not accept",
+                "pull requests. Closing it is automatic and says nothing about the code.",
+                "",
+                "MintCap is source available under a licence its author needs to be able to change",
+                "and enforce, and that only works while one person holds the copyright to all of it.",
+                "Merging outside code would mean every future licence decision needed your agreement",
+                "too. [CONTRIBUTING.md](https://github.com/Nipeno/MintCap/blob/main/CONTRIBUTING.md#code-contributions)",
+                "has the longer version.",
+                "",
+                "**What does help:** [open an issue](https://github.com/Nipeno/MintCap/issues/new/choose).",
+                "Bug reports (a `ReShade.log` attached is gold), pacing problems on hardware the author",
+                "cannot test, and confusing wording in the install guide are all genuinely useful. If you",
+                "describe a change that fits, it gets built and you get credited in the changelog.",
+                "",
+                "Forking for your own use is fine and the source is right there - publishing that fork is",
+                "what the licence does not allow."
+              ].join("\n")
+            });
+            await github.rest.pulls.update({ owner, repo, pull_number: number, state: 'closed' });

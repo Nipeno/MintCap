@@ -1,0 +1,149 @@
+MintCap License, Version 1.0
+Copyright (c) 2026 Nipeno. All rights reserved.
+
+MintCap is source-available software, not open source. The full source code is
+published so that anyone can read exactly what the software does before running
+it. Publishing the source does not place it in the public domain and does not
+grant any right beyond the ones written below.
+
+Each Official Release of the Software is governed by the version of this License
+included in that release. A later version of this License does not change the
+terms of a release that shipped under an earlier one, and does not revive rights
+that ended under Section 5.
+
+Read this before using MintCap. If you do not accept it, do not use MintCap.
+
+
+1. DEFINITIONS
+
+   "Software"  - MintCap, in source or compiled form, including the MintCap
+                 add-on file, and any modified version of it.
+   "Licensor"  - Nipeno, the copyright holder.
+   "You"       - the individual or organisation exercising the permissions in
+                 this License. An organisation includes its members, staff and
+                 anyone acting on its behalf.
+   "Official
+    Release"   - a build published by the Licensor on the MintCap releases page
+                 at https://github.com/Nipeno/MintCap/releases
+
+2. WHAT YOU MAY DO
+
+   Subject to Section 3, the Licensor grants You a free of charge, worldwide,
+   non-exclusive, non-transferable and REVOCABLE license to:
+
+   (a) download, install and run the Software, on as many computers as You
+       like, for personal use or for the internal use of a community or game
+       server You operate;
+
+   (b) build the Software from source for the uses in (a);
+
+   (c) modify the Software for the uses in (a), for Your own use only.
+
+   No fee is charged and none is owed.
+
+3. WHAT YOU MAY NOT DO
+
+   (a) NO REDISTRIBUTION. You may not distribute, publish, share, mirror,
+       re-upload, host for download, or bundle the Software - modified or
+       unmodified, on its own or as part of anything else - without the
+       Licensor's prior written permission. An Official Release is the only
+       legitimate source of the Software.
+
+   (b) NO COMMERCIAL EXPLOITATION. You may not sell, rent, sublicense or
+       otherwise charge for the Software, and you may not include it in any
+       paid product, service, subscription, tier, perk or reward.
+
+   (c) NO REMOVING NOTICES. You may not remove or alter this License, the
+       copyright notice, or any authorship or third-party notice.
+
+   (d) NO ENDORSEMENT OR ASSOCIATION. You may not use "MintCap", "Nipeno", or
+       the Licensor's branding to advertise, endorse or promote anything, or in
+       any way that states or implies the Licensor supports, is affiliated with,
+       or is a partner of You or Your project.
+
+4. DONATIONS
+
+   Accepting donations, tips or voluntary contributions for a community or game
+   server whose players happen to use the Software is not by itself a breach of
+   Section 3(b). This paragraph is a clarification, not a separate grant, and it
+   does not limit Section 5.
+
+5. TERMINATION
+
+   (a) This License terminates automatically and immediately if You breach any
+       part of Section 3.
+
+   (b) THE LICENSOR MAY TERMINATE THIS LICENSE FOR ANY PERSON OR ORGANISATION
+       AT ANY TIME, FOR ANY REASON OR FOR NO REASON, BY WRITTEN NOTICE. Notice
+       is effective when the Licensor publishes it in the "Revocations" section
+       of NOTICE.md in the MintCap repository, or sends it to a contact address
+       or account You have made available. The Licensor is not required to give
+       a reason, and giving one in a particular case does not oblige the
+       Licensor to do so in any other.
+
+   (c) On termination You must stop using the Software and delete all copies of
+       it in Your possession or control.
+
+   (d) Termination for one person or organisation does not affect anyone else's
+       License. Sections 6, 7, 8 and 9 survive termination.
+
+6. SOURCE CODE AND FORKING
+
+   The source is published publicly so it can be read and verified. Where the
+   Software is hosted on GitHub, viewing and forking it on GitHub is permitted
+   to the extent GitHub's Terms of Service require. That platform-level
+   permission is limited to GitHub itself: it grants no right to use, modify,
+   distribute, publish or exploit the Software beyond Section 2, and it does not
+   survive termination under Section 5.
+
+7. THIRD-PARTY COMPONENTS
+
+   The Software builds against, and its releases are distributed alongside,
+   software owned by others - ReShade (BSD 3-Clause) and Dear ImGui (MIT). Those
+   components remain under their own licenses. Their texts, and an inventory of
+   every third-party project involved, ship with each Official Release - see
+   THIRD-PARTY-NOTICES.txt. Nothing in this License limits Your rights in them,
+   and nothing in this License is a grant of rights in them by the Licensor.
+
+8. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+   The Software loads into a running game process and changes how frames are
+   paced. You run it at Your own risk. The Licensor does not warrant that it is
+   permitted on any particular multiplayer server, or by any anti-cheat, game
+   or platform operator. Checking that is Your responsibility.
+
+9. LIMITATION OF LIABILITY
+
+   TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSOR SHALL NOT BE
+   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT
+   OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR ITS
+   USE, INCLUDING WITHOUT LIMITATION ANY LOSS OF DATA, LOSS OF GAME ACCESS,
+   ACCOUNT SUSPENSION OR BAN.
+
+10. RESERVATION OF RIGHTS
+
+   All rights not expressly granted in Section 2 are reserved by the Licensor.
+   If any part of this License is held unenforceable, the rest stays in effect.
+
+11. PERMISSION REQUESTS
+
+   Anything Section 3 forbids may be allowed if the Licensor agrees in writing.
+   Ask: https://github.com/Nipeno/MintCap/issues
+
+12. GOVERNING LAW AND VENUE
+
+   This License is governed by the laws of the Federal Republic of Germany,
+   excluding its conflict-of-law rules and the UN Convention on Contracts for
+   the International Sale of Goods. Exclusive venue for any dispute arising out
+   of or in connection with this License is the court with jurisdiction over the
+   Licensor's place of residence, to the extent such an agreement is legally
+   permitted.
+
+   Where You are a consumer and the law of Your country of residence gives You
+   rights that cannot be waived by agreement - including mandatory consumer
+   protections and any liability that cannot be excluded under Sections 8 and 9 -
+   those rights are unaffected by this Section and by this License.

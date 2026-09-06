@@ -1,0 +1,75 @@
+THIRD-PARTY NOTICES FOR MINTCAP
+===============================
+
+MintCap is source-available software (see LICENSE.txt). It is built with, and its releases are
+distributed alongside, software owned by other people. Those components stay under their own
+licenses. This file records them. Nothing in MintCap's own license restricts your rights in any
+of them.
+
+Two full license texts ship next to this file, because their terms require it:
+
+  * ReShade-LICENSE.txt     BSD 3-Clause - Copyright 2014 Patrick Mours
+  * Dear-ImGui-LICENSE.txt  MIT - Copyright (c) 2014-2025 Omar Cornut
+
+
+1. WHAT IS IN MintCap.addon64
+-----------------------------
+
+The add-on itself is MintCap code, compiled against header-only SDKs:
+
+  * ReShade add-on SDK headers (deps/reshade)  - BSD 3-Clause  - see ReShade-LICENSE.txt
+  * Dear ImGui headers (deps/imgui)            - MIT           - see Dear-ImGui-LICENSE.txt
+
+No other third-party code is linked into it, and it links no third-party DLLs - only Windows
+system libraries (kernel32, shell32, winmm).
+
+
+2. WHAT IS IN dxgi.dll
+----------------------
+
+The dxgi.dll in this release IS RESHADE, redistributed unmodified. It is the official 64-bit
+add-on-enabled ReShade runtime, downloaded from https://reshade.me at build time and renamed to
+dxgi.dll (the file name a game loads it under). ReShade itself is BSD 3-Clause; its notice is in
+ReShade-LICENSE.txt, as that license requires for binary redistribution.
+
+ReShade statically links its own dependencies, so that binary can contain code from the projects
+below. Which ones are present depends on how upstream built it; this is ReShade's full dependency
+set rather than a claim about one build. The authoritative license text for each is the LICENSE
+file in its own repository, linked here.
+
+  Dear ImGui                MIT                       https://github.com/ocornut/imgui
+  MinHook                   BSD 2-Clause              https://github.com/TsudaKageyu/minhook
+  stb (stb_image, ...)      MIT or Unlicense, your    https://github.com/nothings/stb
+                            choice - dual-licensed
+  glad                      MIT for the loader; the   https://github.com/Dav1dde/glad
+                            generated code derives
+                            from Khronos specs
+                            (Apache-2.0)
+  utfcpp                    Boost Software License    https://github.com/nemtrif/utfcpp
+                            1.0
+  SPIRV-Headers             MIT-style Khronos         https://github.com/KhronosGroup/SPIRV-Headers
+                            license
+  VulkanMemoryAllocator     MIT                       https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+  fpng                      Unlicense (public         https://github.com/richgel999/fpng
+                            domain)
+  DirectX-Headers           MIT                       https://github.com/microsoft/DirectX-Headers
+  OpenXR-SDK                Apache-2.0                https://github.com/KhronosGroup/OpenXR-SDK
+  simple-lossless-encoder   BSD 3-Clause              https://github.com/kampidh/simple-lossless-encoder
+  OpenVR                    BSD 3-Clause              https://github.com/ValveSoftware/openvr
+
+ReShade's own source, build files and dependency list: https://github.com/crosire/reshade
+
+
+3. NO ENDORSEMENT
+-----------------
+
+Bundling ReShade does not mean ReShade endorses MintCap. MintCap is not affiliated with, endorsed
+by, or supported by ReShade, Patrick Mours, Omar Cornut, or any project listed above. Every
+reference to them here is factual identification only.
+
+
+4. CORRECTIONS
+--------------
+
+If a component is missing, misattributed, or its license has changed, that is a bug and it will be
+fixed: https://github.com/Nipeno/MintCap/issues

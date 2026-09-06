@@ -1,0 +1,93 @@
+# MintCap - dev CI: build the add-on and assemble the end-user bundle.
+# Copyright (c) 2026 Nipeno. All rights reserved.
+# Source available, not open source. See LICENSE.
+
+name: Build
+
+# Dev CI: builds the addon and assembles the end-user bundle on every push/PR so
+# breakage shows up immediately. Releases are cut by release.yml on a v* tag - this
+# workflow deliberately has no write access and never publishes anything.
+# paths-ignore keeps a Windows runner from spinning up for a README typo. Note what is
+# NOT ignored: packaging/** ships inside the zip, and .github/actions/** is the ReShade
+# fetch itself - both must still be built and packaged.
+# (Kept in sync by hand: GitHub Actions does not support YAML anchors.)
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+      - '.github/labels.yml'
+      - '.github/sync-labels.sh'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+      - '.github/labels.yml'
+      - '.github/sync-labels.sh'
+      - 'LICENSE'
+  workflow_dispatch:   # lets you trigger a build manually from the Actions tab
+
+permissions:
+  contents: read
+
+# One build per branch: a new commit cancels the previous in-flight run instead of
+# leaving two runners racing to publish the same artifact.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      # CI builds are never releases, so they stay on the 0.0.0 sentinel version.
+      - name: Configure (MSVC x64)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DMINTCAP_VERSION="0.0.0"
+
+      - name: Build (Release)
+        run: cmake --build build --config Release
+
+      # --- Fetch the latest official ReShade (add-on build) -----------------
+      # Shared with release.yml; the pinned fallback lives in the action.
+      - name: Resolve + download latest ReShade
+        id: reshade
+        uses: ./.github/actions/fetch-reshade
+
+      # --- Assemble the drag-and-drop bundle --------------------------------
+      - name: Assemble bundle
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          New-Item -ItemType Directory -Force -Path 'dist/Copy-these-into-plugins' | Out-Null
+          # Files the user drags into their FiveM plugins folder.
+          Copy-Item build/Release/MintCap.addon64 'dist/Copy-these-into-plugins/'
+          Copy-Item dxgi.dll                             'dist/Copy-these-into-plugins/'
+          Copy-Item packaging/Enable-ReShade.bat         'dist/Copy-these-into-plugins/'
+          # Guide + licenses stay at the zip root.
+          Copy-Item 'packaging/Install Guide.html'       dist/
+          Copy-Item third_party/ReShade-LICENSE.txt      dist/
+          Copy-Item third_party/Dear-ImGui-LICENSE.txt   dist/
+          # Records ReShade's own statically-linked deps: we redistribute its binary, so
+          # their notice requirements land on us, not upstream.
+          Copy-Item third_party/THIRD-PARTY-NOTICES.txt  dist/
+          Copy-Item LICENSE                              dist/LICENSE.txt
+          # The zip name carries the addon version, so record the bundled ReShade here.
+          "${{ steps.reshade.outputs.version }}" | Out-File -FilePath dist/reshade-version.txt -Encoding utf8 -NoNewline
+          Compress-Archive -Path dist/* -DestinationPath MintCap_v0.0.0.zip -Force
+
+      # --- Artifact (available on every build) ------------------------------
+      - name: Upload bundle (zip)
+        uses: actions/upload-artifact@v4
+        with:
+          name: MintCap
+          path: MintCap_v0.0.0.zip

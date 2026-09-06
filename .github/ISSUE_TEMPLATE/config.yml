@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Install guide (README)
+    url: https://github.com/Nipeno/MintCap#readme
+    about: Read this first — covers the ReShade5 enable step, the overlay key, and VSync.

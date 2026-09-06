@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest an improvement to the addon, tooling, or docs.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Heads up: the addon deliberately stays small — one adjustable cap, no telemetry, no extra dependencies. Suggestions that keep it that way are the easiest to land.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What are you trying to do that's hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
